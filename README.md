@@ -1,3 +1,105 @@
+# FamilySite - MERN Stack Web Application
+
+`FamilySite` là một ứng dụng web full-stack được xây dựng bằng MERN Stack (MongoDB, Express, React, Node.js) với mục tiêu tạo ra một không gian riêng tư và an toàn cho các thành viên trong gia đình để kết nối, chia sẻ kỷ niệm và quản lý các sự kiện chung.
+
+Dự án được xây dựng với kiến trúc hiện đại, tập trung vào khả năng mở rộng, bảo mật và trải nghiệm người dùng chuyên nghiệp thông qua việc tích hợp sâu với Ant Design.
+
+## Mục lục
+
+- [Tổng quan Kiến trúc & Công nghệ](#tổng-quan-kiến-trúc--công-nghệ)
+- [Các chức năng đã hoàn thành (v1.0)](#các-chức-năng-đã-hoàn-thành-v10)
+- [Hướng dẫn Cài đặt và Chạy dự án](#hướng-dẫn-cài-đặt-và-chạy-dự-án)
+- [Cấu trúc Thư mục](#cấu-trúc-thư-mục)
+- [Các API Endpoint chính](#các-api-endpoint-chính)
+- [Hướng đi và Mục tiêu tiếp theo](#hướng-đi-và-mục-tiêu-tiếp-theo)
+
+## Tổng quan Kiến trúc & Công nghệ
+
+Dự án được chia thành hai phần riêng biệt: `frontend` và `backend`, có thể được phát triển và triển khai độc lập.
+
+**Backend:**
+- **Nền tảng:** Node.js, Express.js (sử dụng TypeScript)
+- **Cơ sở dữ liệu:** MongoDB (kết nối qua MongoDB Atlas)
+- **Tương tác DB:** Mongoose ODM
+- **Xác thực:** JSON Web Tokens (JWT) với thời gian hết hạn.
+- **Bảo mật:** Hashing mật khẩu với `bcryptjs`, middleware bảo vệ và phân quyền route.
+
+**Frontend:**
+- **Thư viện:** React (sử dụng TypeScript, Vite làm công cụ build)
+- **UI Framework:** Ant Design (AntD) - được tích hợp sâu cho toàn bộ giao diện.
+- **Quản lý State & API:** React Hooks, Axios (với interceptor để tự động quản lý token).
+- **Routing:** React Router DOM
+- **Styling:** SCSS (SASS) cho styling có cấu trúc và dễ bảo trì.
+
+## Các chức năng đã hoàn thành (v1.0)
+
+Tính đến thời điểm hiện tại, dự án đã hoàn thành các chức năng cốt lõi sau:
+
+### 1. Hệ thống Xác thực & Phân quyền (Authentication & Authorization)
+- **Đăng ký:** Người dùng có thể tạo tài khoản mới với `username`, `email` (đảm bảo duy nhất) và `password`.
+- **Đăng nhập linh hoạt:** Người dùng có thể đăng nhập bằng `username` HOẶC `email`.
+- **Phân quyền 3 cấp độ:**
+    - `user`: Vai trò mặc định, có quyền xem các trang công khai và các tính năng cơ bản.
+    - `moderator`: Có quyền truy cập trang quản trị (`/dashboard`).
+    - `admin`: Có toàn quyền truy cập hệ thống, bao gồm cả các trang cài đặt nâng cao.
+- **Bảo mật Token:** Sử dụng JWT với thời gian hết hạn (`expiresIn`) được cấu hình ở backend, tự động đăng xuất người dùng khi token hết hạn.
+- **Phân luồng sau đăng nhập:** `admin`/`moderator` được chuyển hướng đến `/dashboard`, trong khi `user` được chuyển hướng về trang chủ (`/`).
+
+### 2. Giao diện Người dùng (UI)
+- **Trang chủ (Public):** Một trang landing page giới thiệu về ứng dụng, sử dụng layout riêng (`MainLayout`) với Navbar và Footer.
+- **Trang Quản trị (Admin):** Một layout riêng (`AdminLayout`) với Sidebar có thể thu gọn.
+- **Giao diện responsive:** Các layout và component được xây dựng với AntD để tương thích tốt trên các thiết bị khác nhau.
+
+### 3. Hệ thống Menu Động (Dynamic Navigation)
+- **Nguồn dữ liệu từ Database:** Các mục menu (cả Navbar và Sidebar) không được viết cứng trong code mà được lấy động từ cơ sở dữ liệu MongoDB.
+- **Quản lý Menu qua Giao diện:** Trang `/dashboard/settings/navigation` cho phép `admin` thực hiện đầy đủ các thao tác **CRUD (Tạo, Xem, Sửa, Xóa)** đối với các mục menu.
+- **Phân quyền Menu:**
+    - API tự động lọc và chỉ trả về các mục menu mà vai trò của người dùng được phép xem.
+    - Giao diện (ví dụ: dropdown avatar) cũng ẩn/hiện các liên kết (như "Go to Dashboard") dựa trên vai trò người dùng.
+
+## Hướng dẫn Cài đặt và Chạy dự án
+
+### Yêu cầu
+- Node.js (v16 trở lên)
+- npm hoặc yarn
+- Một tài khoản MongoDB Atlas (có thể dùng gói miễn phí)
+
+### Các bước thiết lập
+1.  **Clone dự án:**
+    ```bash
+    git clone https://github.com/LongHoang77/FamilySite.git
+    cd FamilySite
+    ```
+
+2.  **Thiết lập Backend:**
+    - Tạo một file tên là `.env` trong thư mục gốc `FamilySite`.
+    - Sao chép nội dung từ file `.env.example` (nếu có) và điền các giá trị của bạn:
+      ```env
+      MONGO_URI=<Your_MongoDB_Atlas_Connection_String>
+      PORT=5001
+      JWT_SECRET=<Your_Strong_JWT_Secret>
+      
+      # Dùng để tạo tài khoản admin đầu tiên
+      ADMIN_USERNAME=admin
+      ADMIN_EMAIL=admin@familysite.com
+      ADMIN_PASSWORD=<Your_Strong_Admin_Password>
+      ```
+
+3.  **Cài đặt & Khởi tạo (Lần đầu tiên):**
+    Từ thư mục gốc `FamilySite`, chạy lệnh `setup` đặc biệt. Lệnh này sẽ cài đặt tất cả dependencies và tạo tài khoản admin đầu tiên.
+    ```bash
+    npm run setup
+    ```
+
+4.  **Chạy dự án (Hàng ngày):**
+    Để khởi động cả server backend và frontend cùng lúc, chạy lệnh sau từ thư mục gốc `FamilySite`:
+    ```bash
+    npm start
+    ```
+    - Frontend sẽ chạy tại `http://localhost:5173`.
+    - Backend sẽ chạy tại `http://localhost:5001`.
+
+
 
 ## Các API Endpoint chính
 
