@@ -1,0 +1,21 @@
+{
+  "name": "familysite",
+  "version": "1.0.0",
+  "description": "Full-stack MERN application for FamilySite",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm run dev --prefix backend",
+    "client": "npm run dev --prefix frontend",
+    "seed-admin": "npm run seed --prefix backend",
+    "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend",
+    "setup": "npm run install-all && npm run seed-admin",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

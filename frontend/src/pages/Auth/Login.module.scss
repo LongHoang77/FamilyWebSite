@@ -1,0 +1,28 @@
+// src/pages/Auth/Login.module.scss
+@import "../../assets/scss/variables";
+
+.loginPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: $background-color;
+
+  .loginCard {
+    width: 100%;
+    max-width: 400px;
+    box-shadow: $card-shadow;
+    border-radius: 8px;
+  }
+
+  .loginTitle {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: $primary-color;
+  }
+
+  .registerLink {
+    margin-top: 1rem;
+    text-align: center;
+  }
+}
